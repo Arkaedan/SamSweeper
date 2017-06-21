@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SamSweeper {
     class Field {
 
-        private static int[,] surroundingTiles = {
+        public static readonly int[,] surroundingTiles = {
             {-1, -1}, {0, -1}, {1, -1},
             {-1,  0},          {1,  0},
             {-1,  1}, {0,  1}, {1,  1}
@@ -41,8 +41,26 @@ namespace SamSweeper {
 
             isEmpty = false;
 
-            foreach (Tile tile in tiles) {
+            List<Tile> availableTiles = new List<Tile>();
 
+            foreach (Tile tile in tiles) {
+                availableTiles.Add(tile);
+            }
+
+            availableTiles.Remove(GetTile(startTileX, startTileY));
+
+            for (int i = 0; i < 8; i++) {
+                int x = startTileX + surroundingTiles[i, 0];
+                int y = startTileY + surroundingTiles[i, 1];
+                if (0 <= x && x < width && 0 <= y && y < height) {
+                    availableTiles.Remove(GetTile(x, y));
+                }
+            }
+
+            for (int i = 0; i < numOfMines; i++) {
+                Tile tile = availableTiles[rand.Next(0, availableTiles.Count)];
+                tile.IsBomb = true;
+                availableTiles.Remove(tile);
             }
 
             //for (int i = 0; i < numOfMines; i++) {
@@ -59,7 +77,9 @@ namespace SamSweeper {
 
             foreach (Tile tile in tiles) {
                 for (int i = 0; i < 8; i++) {
-                    if (IsMine(tile.X + surroundingTiles[i, 0], tile.Y + surroundingTiles[i, 1])) tile.NumSurroundingBombs++;
+                    if (IsMine(tile.X + surroundingTiles[i, 0], tile.Y + surroundingTiles[i, 1])) {
+                        tile.NumSurroundingBombs++;
+                    }
                 }
             }
         }
