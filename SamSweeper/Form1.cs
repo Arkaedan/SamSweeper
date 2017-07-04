@@ -39,6 +39,7 @@ namespace SamSweeper {
                     btn.Width = btnSize;
                     btn.Height = btnSize;
                     btn.Text = "";
+                    btn.Font = new Font(btn.Font, btn.Font.Style | FontStyle.Bold);
                     btn.Location = new Point(posX + x * btnSize, posY + y * btnSize);
                     btn.TabStop = false;
                     btn.MouseDown += new MouseEventHandler(btn_Click);
@@ -52,6 +53,8 @@ namespace SamSweeper {
             foreach (Button btn in buttons) {
                 btn.Text = "";
                 btn.Enabled = true;
+                btn.BackColor = default(Color);
+                btn.UseVisualStyleBackColor = true;
             }
             mineField.Reset();
         }
@@ -78,7 +81,7 @@ namespace SamSweeper {
                 mineField.PlaceMines(tile.X, tile.Y);
             }
 
-            btn.Enabled = false;
+            btn.BackColor = Color.Gray;
 
             if (tile.IsBomb) {
                 btn.Text = "B";
@@ -87,8 +90,7 @@ namespace SamSweeper {
             } else {
                 btn.Text = tile.NumSurroundingBombs.ToString();
             }
-
-        }
+        } // End btn_Click
 
     }
 }
