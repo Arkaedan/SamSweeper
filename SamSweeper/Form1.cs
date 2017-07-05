@@ -43,6 +43,8 @@ namespace SamSweeper {
                     btn.Location = new Point(posX + x * btnSize, posY + y * btnSize);
                     btn.TabStop = false;
                     btn.MouseDown += new MouseEventHandler(btn_Click);
+                    btn.BackgroundImage = null;
+                    btn.BackgroundImageLayout = ImageLayout.Stretch;
                     btn.Tag = mineField.GetTile(x, y);
                     this.Controls.Add(btn);
                 }
@@ -55,6 +57,7 @@ namespace SamSweeper {
                 btn.Enabled = true;
                 btn.BackColor = default(Color);
                 btn.UseVisualStyleBackColor = true;
+                btn.BackgroundImage = null;
             }
             mineField.Reset();
         }
@@ -64,16 +67,20 @@ namespace SamSweeper {
             Button btn = (Button)sender;
             Tile tile = (Tile)(btn.Tag);
 
+            if (btn.Text == " ") return;
+
             if (e.Button == MouseButtons.Right) {
                 if (btn.Text == "") {
-                    btn.Text = "P";
-                } else {
-                    btn.Text = "";
+                    if (btn.BackgroundImage == null) {
+                        btn.BackgroundImage = SamSweeper.Properties.Resources.triangular_flag_on_post_1f6a9;
+                    } else {
+                        btn.BackgroundImage = null;
+                    }
                 }
                 return;
             }
 
-            if (btn.Text == "P") {
+            if (btn.BackgroundImage != null) {
                 return;
             }
 
@@ -89,6 +96,17 @@ namespace SamSweeper {
                 ResetGame();
             } else {
                 btn.Text = tile.NumSurroundingBombs.ToString();
+            }
+
+            if (btn.Text == "0") {
+                btn.Text = " ";
+                for (int i = 0; i < 8; i++) {
+                    int x = tile.X + Field.surroundingTiles[i, 0];
+                    int y = tile.Y + Field.surroundingTiles[i, 1];
+                    if (0 <= x && x < width && 0 <= y && y < height) {
+                        btn_Click(buttons[x, y], e);
+                    }
+                }
             }
         } // End btn_Click
 
